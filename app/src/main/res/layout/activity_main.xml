@@ -33,12 +33,5 @@
         android:layout_height="wrap_content"
         android:text="Settings"
         android:layout_gravity="end" />
-    <TextView
-        android:id="@+id/testLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="raw"
-        android:textSize="20sp"
-        android:textColor="@android:color/black" />
 
 </LinearLayout>

@@ -14,7 +14,6 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 
-// °C
 class MainActivity : ComponentActivity(), SensorEventListener  {
 
     //Sensor variables
@@ -22,7 +21,6 @@ class MainActivity : ComponentActivity(), SensorEventListener  {
     private var temperatureSensor: Sensor? = null
 
     //Modules from the site
-    private lateinit var testLabel: TextView
     private lateinit var temperatureText: TextView
     private lateinit var settingsButton: Button
     private lateinit var rootLayout: LinearLayout
@@ -42,7 +40,6 @@ class MainActivity : ComponentActivity(), SensorEventListener  {
         //initialising the modules from the site, now editable etc.
         temperatureText = findViewById(R.id.temperatureText)
         settingsButton = findViewById(R.id.settingsButton)
-        testLabel = findViewById(R.id.testLabel)
 
         //initialising sensor manager
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -91,8 +88,6 @@ class MainActivity : ComponentActivity(), SensorEventListener  {
 
         val index = ((1 - normalized) * (12)).toInt()  // 1-normalized inverts to match color order
         rootLayout.setBackgroundColor(Color.parseColor(temperatureColors[index]))
-
-        testLabel.text = index.toString()
 
     }
 
