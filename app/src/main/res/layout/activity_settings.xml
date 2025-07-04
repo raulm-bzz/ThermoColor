@@ -64,5 +64,14 @@
             android:text="Cancel"
             android:layout_marginStart="16dp" />
     </LinearLayout>
+    <TextView
+        android:id="@+id/givenTempText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="The temperature was just: "
+        android:textSize="22sp"
+        android:layout_marginTop="24dp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black" />
 
 </LinearLayout>

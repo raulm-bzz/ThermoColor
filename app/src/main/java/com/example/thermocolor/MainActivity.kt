@@ -31,19 +31,14 @@ class MainActivity : ComponentActivity(), SensorEventListener  {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        val prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, Context.MODE_PRIVATE)
 
-
-        //val prefs = getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
-
-
-
-        //initialising the modules from the site, now editable etc.
+        //Initialising the modules from the site, now editable etc.
         temperatureText = findViewById(R.id.temperatureText)
         settingsButton = findViewById(R.id.settingsButton)
 
-        //initialising sensor manager
+        //Initialising Sensor Manager and Temperature Sensor
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        //temperature sensor initialising
         temperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE)
 
         if (temperatureSensor == null) {
@@ -52,6 +47,7 @@ class MainActivity : ComponentActivity(), SensorEventListener  {
 
         settingsButton.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
+            intent.putExtra("givenTemp", prefs.getFloat(SettingsActivity.KEY_TEMP, 20f))            //Send Current Temperature with intent
             startActivity(intent)
         }
 
@@ -65,17 +61,24 @@ class MainActivity : ComponentActivity(), SensorEventListener  {
     }
 
     fun changeBackground(){
+        //Background element
+        rootLayout = findViewById(R.id.rootLayout)
+
+        //Get prefs from local
         val prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, Context.MODE_PRIVATE)
         val temperature = prefs.getFloat(SettingsActivity.KEY_TEMP, 1f)
         val hotLimit = prefs.getFloat(SettingsActivity.KEY_HOT, 25f)
         val coldLimit = prefs.getFloat(SettingsActivity.KEY_COLD, 15f)
+
+        //Logic to determine which of the 12 Colors is appropriate
         val normalized = (temperature - coldLimit) / (hotLimit - coldLimit)
 
+        //12 Different Backgroundcolors resembling temperature
         val temperatureColors = listOf(
-            "#440e09", "#440e09", "#4a1c00", "#4b2c00", "#473b00", "#3d4a12", "#2f5830", "#1e634c", "#156c68",
-            "#267281", "#427796", "#5f7aa5"
+            "#440e09", "#440e09", "#4a1c00", "#4b2c00", "#473b00", "#3d4a12", "#2f5830", "#1e634c",
+            "#156c68", "#267281", "#427796", "#5f7aa5"
         )
-        rootLayout = findViewById(R.id.rootLayout)
+
 
         if (temperature <= coldLimit) {
             rootLayout.setBackgroundColor(Color.parseColor(temperatureColors.last()))
@@ -85,12 +88,15 @@ class MainActivity : ComponentActivity(), SensorEventListener  {
             rootLayout.setBackgroundColor(Color.parseColor(temperatureColors.first()))
             return
         }
+        else {
+            val index = ((1 - normalized) * (12)).toInt()  //1 minus normalised inverts to match color order
+            rootLayout.setBackgroundColor(Color.parseColor(temperatureColors[index]))
+        }
 
-        val index = ((1 - normalized) * (12)).toInt()  // 1-normalized inverts to match color order
-        rootLayout.setBackgroundColor(Color.parseColor(temperatureColors[index]))
 
     }
 
+    //While on SettingsActivity or exited
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(this)
@@ -98,16 +104,19 @@ class MainActivity : ComponentActivity(), SensorEventListener  {
 
     override fun onSensorChanged(event: SensorEvent?) {
         event?.let {
+            //Select the correct Sensor
             if (it.sensor.type == Sensor.TYPE_AMBIENT_TEMPERATURE) {
                 val temperature = it.values[0]
                 temperatureText.text = "${"%.1f".format(temperature)} °C"
+
                 //save temperature in local
                 val sharedPref = getSharedPreferences(SettingsActivity.PREFS_NAME, Context.MODE_PRIVATE)
                 with(sharedPref.edit()) {
                     putFloat(SettingsActivity.KEY_TEMP, temperature)
                     apply()
                 }
-                //onResume()
+
+                //Execute Background change
                 changeBackground()
             }
         }
@@ -120,13 +129,9 @@ class MainActivity : ComponentActivity(), SensorEventListener  {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        //outState.putString("weight_input", weightInput.text.toString())
-        //outState.putString("height_input", heightInput.text.toString())
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        //weightInput.setText(savedInstanceState.getString("weight_input", ""))
-        //heightInput.setText(savedInstanceState.getString("height_input", ""))
     }
     }

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class SettingsActivity : AppCompatActivity() {
@@ -14,6 +15,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var editHotThreshold: EditText
     private lateinit var saveButton: Button
     private lateinit var cancelButton: Button
+    private lateinit var givenTempText: TextView
 
     companion object {
         const val PREFS_NAME = "thermoPrefs"
@@ -31,6 +33,7 @@ class SettingsActivity : AppCompatActivity() {
         editHotThreshold = findViewById(R.id.editHotThreshold)
         saveButton = findViewById(R.id.saveButton)
         cancelButton = findViewById(R.id.cancelButton)
+        givenTempText = findViewById(R.id.givenTempText)
 
         // Lade vorhandene Werte
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -39,6 +42,9 @@ class SettingsActivity : AppCompatActivity() {
 
         editColdThreshold.setText(cold.toString())
         editHotThreshold.setText(hot.toString())
+
+        val givenTemp = intent.getFloatExtra("givenTemp", 20f)
+        givenTempText.text = "The temperature was just %.2f".format(givenTemp)                      //Receive Communication from MainActivity
 
         saveButton.setOnClickListener {
             val coldValue = editColdThreshold.text.toString().toFloatOrNull()
@@ -51,7 +57,6 @@ class SettingsActivity : AppCompatActivity() {
                     .putFloat(KEY_HOT, hotValue)
                     .apply()
 
-                // Ergebnis an MainActivity zurückgeben (optional)
                 val resultIntent = Intent()
                 setResult(Activity.RESULT_OK, resultIntent)
                 finish()
