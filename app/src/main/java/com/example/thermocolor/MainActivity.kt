@@ -104,7 +104,7 @@ class MainActivity : ComponentActivity(), SensorEventListener  {
 
     override fun onSensorChanged(event: SensorEvent?) {
         event?.let {
-            //Select the correct Sensor
+            //Select the right Sensor
             if (it.sensor.type == Sensor.TYPE_AMBIENT_TEMPERATURE) {
                 val temperature = it.values[0]
                 temperatureText.text = "${"%.1f".format(temperature)} °C"

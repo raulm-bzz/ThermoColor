@@ -35,7 +35,7 @@ class SettingsActivity : AppCompatActivity() {
         cancelButton = findViewById(R.id.cancelButton)
         givenTempText = findViewById(R.id.givenTempText)
 
-        // Lade vorhandene Werte
+        //Load local
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val cold = prefs.getFloat(KEY_COLD, 15f)
         val hot = prefs.getFloat(KEY_HOT, 25f)
@@ -51,12 +51,13 @@ class SettingsActivity : AppCompatActivity() {
             val hotValue = editHotThreshold.text.toString().toFloatOrNull()
 
             if (coldValue != null && hotValue != null) {
-                // Speichern in SharedPreferences
+                //Save local
                 prefs.edit()
                     .putFloat(KEY_COLD, coldValue)
                     .putFloat(KEY_HOT, hotValue)
                     .apply()
 
+                //Send back to MainActivity
                 val resultIntent = Intent()
                 setResult(Activity.RESULT_OK, resultIntent)
                 finish()
